@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adhesion-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adhesion-deployment
+  template:
+    metadata:
+      labels:
+        app: adhesion-deployment
+    spec:
+      containers:
+        - image: blackrock30/adhesion-service:1.0
+          name: adhesion-deployment
+          ports:
+            - containerPort: 9001
+          env:
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgresql:5432/adhesion_service_db?useSSL=false
+            - name: SPRING_DATASOURCE_USERNAME
+              value: adhesion_service
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: update
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adhesion-service-svc
+spec:
+  ports:
+    - targetPort: 9001
+      port: 80
+  selector:
+    app: adhesion-deployment
+
