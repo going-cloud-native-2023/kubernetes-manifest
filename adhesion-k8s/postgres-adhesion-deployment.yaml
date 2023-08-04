@@ -1,49 +1,67 @@
-# postgres-adhesion-deployment.yaml
-apiVersion: apps/v1
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  namespace: default
+data:
+  postgres_user: adhesion
+  postgres_password: adhesion-password
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: postgres-adhesion
+  name: postgres
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: postgres-adhesion
   template:
     metadata:
       labels:
-        app: postgres-adhesion
+        app: postgres
     spec:
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pv-claim
       containers:
-        - name: postgres-adhesion
-          image: postgres:latest
+        - image: postgres
+          name: postgres
           env:
             - name: POSTGRES_USER
-              value: adhesion-user
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_user
             - name: POSTGRES_PASSWORD
-              value: password
-            - name: POSTGRES_DB
-              value: adhesion_db
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           ports:
             - containerPort: 5432
+              name: postgres
           volumeMounts:
-            - name: postgres-adhesion-persistent-storage
+            - name: postgres-storage
               mountPath: /var/lib/postgresql/data
-      volumes:
-        - name: postgres-adhesion-persistent-storage
-          persistentVolumeClaim:
-            claimName: postgres-adhesion-pvc
-
 ---
-
-# postgres-adhesion-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-adhesion-service
+  name: postgres
 spec:
-  selector:
-    app: postgres-adhesion
+  type: ClusterIP
   ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
+    - port: 5432
+  selector:
+    app: postgres
