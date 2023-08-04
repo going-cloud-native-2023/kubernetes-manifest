@@ -73,7 +73,7 @@ spec:
                   key: name
           ports:
             - containerPort: 5432
-              name: postgresPrestation
+              name: postgres
           volumeMounts:
             - name: postgres-prestation-persistance-storage
               mountPath: /var/lib/postgresql/data
