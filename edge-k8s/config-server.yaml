@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: cloud-config-server-app
-          image: blackrock30/cloud-config-server:1.0
+          image: blackrock30/cloud-config-server:1.0.1
           imagePullPolicy: Always
           ports:
             - containerPort: 8088
