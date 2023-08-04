@@ -1,84 +1,49 @@
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: postgres-prestation
-  labels:
-    app: postgres-prestation
-    tier: database
-spec:
-  ports:
-    - port: 5432
-  selector:
-    app: postgres-prestation
-    tier: database
-  clusterIP: None
-
----
-
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-prestation-pv-claim
-  labels:
-    app: postgres-prestation
-    tier: database
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-
----
-
+# postgres-prestation-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres-prestation
-  labels:
-    app: postgres-prestation
-    tier: database
-
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: postgres-prestation
-  strategy:
-    type: Recreate
   template:
     metadata:
       labels:
         app: postgres-prestation
-        tier: database
     spec:
       containers:
-        - image: postgres
-          name: postgres-prestation
+        - name: postgres-prestation
+          image: postgres:latest
           env:
             - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-prestation-credentials
-                  key: postgres_user
+              value: prestation-user
             - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: postgres_password
+              value: password
             - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: postgres-prestation-conf
-                  key: name
+              value: prestation_db
           ports:
             - containerPort: 5432
-              name: postgres
           volumeMounts:
-            - name: postgres-prestation-persistance-storage
+            - name: postgres-prestation-persistent-storage
               mountPath: /var/lib/postgresql/data
-
       volumes:
-        - name: postgres-prestation-persistance-storage
+        - name: postgres-prestation-persistent-storage
           persistentVolumeClaim:
-            claimName: postgres-prestation-pv-claim
+            claimName: postgres-prestation-pvc
+
+---
+
+# postgres-prestation-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-prestation-service
+spec:
+  selector:
+    app: postgres-prestation
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
