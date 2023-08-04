@@ -38,10 +38,12 @@ spec:
           volumeMounts:
             - name: prestation-service-persistent-storage  # Use the same PVC name you defined in the PVC manifest
               mountPath: /app/data  # Mount path within the container where data should be persisted
-          volumes:
-            - name: prestation-service-persistent-storage  # Use the same PVC name you defined in the PVC manifest
-              persistentVolumeClaim:
-                claimName: postgres-prestation-pvc
+
+      volumes:
+        - name: prestation-service-persistent-storage  # Use the same PVC name you defined in the PVC manifest
+          persistentVolumeClaim:
+            claimName: postgres-prestation-pvc
+
 
 ---
 
