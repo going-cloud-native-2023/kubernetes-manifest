@@ -20,17 +20,17 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-config
+                  name: postgres-pres-config
                   key: postgres_user
             - name: POSTGRES_PASSWORD
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-prestation-config
+                  name: postgres-pres-config
                   key: postgres_password
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: hostname-prestation-config
+                  name: hostname-pres-config
                   key: postgres_host
           image: blackrock30/prestation-service:1.0.2
 

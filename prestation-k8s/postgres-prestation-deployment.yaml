@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: postgres-prestation-config
+  name: postgres-pres-config
   namespace: default
 data:
   postgres_user: prestation
@@ -10,7 +10,7 @@ data:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-prestation-pv-claim
+  name: postgres-pres-pv-claim
 spec:
   accessModes:
     - ReadWriteOnce
@@ -21,51 +21,51 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-prestation
+  name: postgres-pres
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres-prestation
+      app: postgres-pres
   template:
     metadata:
       labels:
-        app: postgres-prestation
+        app: postgres-pres
     spec:
       volumes:
-        - name: postgres-prestation-storage
+        - name: postgres-pres-storage
           persistentVolumeClaim:
-            claimName: postgres-prestation-pv-claim
+            claimName: postgres-pres-pv-claim
       containers:
         - image: postgres:latest
-          name: postgresp
+          name: postgres-pres
           env:
             - name: POSTGRES_USER
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-config
+                  name: postgres-pres-config
                   key: postgres_user
             - name: POSTGRES_PASSWORD
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-config
+                  name: postgres-pres-config
                   key: postgres_password
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           ports:
             - containerPort: 5432
-              name: postgresp
+              name: postgres-pres
           volumeMounts:
-            - name: postgres-prestation-storage
+            - name: postgres-pres-storage
               mountPath: /var/lib/postgresql/data
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-prestation
+  name: postgres-pres
 spec:
   type: ClusterIP
   ports:
     - port: 5432
   selector:
-    app: postgres-prestation
+    app: postgres-pres
