@@ -30,7 +30,7 @@ spec:
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: hostname-config
+                  name: hostname-prestation-config
                   key: postgres_host
           image: blackrock30/prestation-service:1.0.2
 
