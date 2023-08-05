@@ -1,60 +1,48 @@
-# prestation-service-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prestation-service
+  name: prestation-deployment
+  namespace: default
 spec:
-  replicas: 1  # Adjust the number of replicas as needed
+  replicas: 1
   selector:
     matchLabels:
-      app: prestation-service
+      app: prestation-deployment
   template:
     metadata:
+      name: prestation-deployment
       labels:
-        app: prestation-service
+        app: prestation-deployment
     spec:
       containers:
-        - name: prestation-service
-          image: blacrock30/prestation-service:1.0.1
-          ports:
-            - containerPort: 9002
+        - name: prestation-deployment
           env:
-            - name: POSTGRES_HOST
-              value: postgres-prestation-service
-            - name: POSTGRES_PORT
-              value: "5432"
-            - name: POSTGRES_DB
-              value: prestation_db
             - name: POSTGRES_USER
-              value: prestation_user
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_user
             - name: POSTGRES_PASSWORD
-              value: password
-            - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-            - name: SPRING_DATASOURCE_USERNAME
-              value: ${POSTGRES_USER}
-            - name: SPRING_DATASOURCE_PASSWORD
-              value: ${POSTGRES_PASSWORD}
-          volumeMounts:
-            - name: prestation-service-persistent-storage  # Use the same PVC name you defined in the PVC manifest
-              mountPath: /app/data  # Mount path within the container where data should be persisted
-
-      volumes:
-        - name: prestation-service-persistent-storage  # Use the same PVC name you defined in the PVC manifest
-          persistentVolumeClaim:
-            claimName: postgres-prestation-pvc
-
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-prestation-config
+                  key: postgres_password
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: hostname-config
+                  key: postgres_host
+          image: blackrock30/prestation-service:1.0.2
 
 ---
 
-# prestation-service-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: prestation-service-service
+  name: prestation-service
 spec:
   selector:
-    app: prestation-service
+    app: prestation-deployment
   ports:
     - protocol: TCP
       port: 9002

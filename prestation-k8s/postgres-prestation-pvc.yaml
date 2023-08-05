@@ -1,11 +1,62 @@
-# postgres-prestation-pvc.yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
+# prestation-service-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: postgres-prestation-pvc
+  name: prestation-service
 spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 100Mi  # Adjust the size according to your needs
+  replicas: 1  # Adjust the number of replicas as needed
+  selector:
+    matchLabels:
+      app: prestation-service
+  template:
+    metadata:
+      labels:
+        app: prestation-service
+    spec:
+      containers:
+        - name: prestation-service
+          image: blacrock30/prestation-service:1.0.1
+          ports:
+            - containerPort: 9002
+          env:
+            - name: POSTGRES_HOST
+              value: postgres-prestation-service
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DB
+              value: prestation_db
+            - name: POSTGRES_USER
+              value: prestation_user
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+            - name: SPRING_DATASOURCE_USERNAME
+              value: ${POSTGRES_USER}
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: ${POSTGRES_PASSWORD}
+          volumeMounts:
+            - name: prestation-service-persistent-storage  # Use the same PVC name you defined in the PVC manifest
+              mountPath: /app/data  # Mount path within the container where data should be persisted
+
+      volumes:
+        - name: prestation-service-persistent-storage  # Use the same PVC name you defined in the PVC manifest
+          persistentVolumeClaim:
+            claimName: postgres-prestation-pvc
+
+
+---
+
+# prestation-service-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: prestation-service-service
+spec:
+  selector:
+    app: prestation-service
+  ports:
+    - protocol: TCP
+      port: 9002
+      targetPort: 9002
+  type: NodePort

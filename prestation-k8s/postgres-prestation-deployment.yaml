@@ -1,4 +1,23 @@
-# postgres-prestation-deployment.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-prestation-config
+  namespace: default
+data:
+  postgres_user: prestation
+  postgres_password: prestation-password
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-prestation-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,37 +32,40 @@ spec:
       labels:
         app: postgres-prestation
     spec:
+      volumes:
+        - name: postgres-prestation-storage
+          persistentVolumeClaim:
+            claimName: postgres-prestation-pv-claim
       containers:
-        - name: postgres-prestation
-          image: postgres:latest
+        - image: postgres:latest
+          name: postgres-prestation
           env:
             - name: POSTGRES_USER
-              value: prestation-user
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_user
             - name: POSTGRES_PASSWORD
-              value: password
-            - name: POSTGRES_DB
-              value: prestation_db
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: postgres_password
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           ports:
             - containerPort: 5432
+              name: postgres-prestation
           volumeMounts:
-            - name: postgres-prestation-persistent-storage
+            - name: postgres-prestation-storage
               mountPath: /var/lib/postgresql/data
-      volumes:
-        - name: postgres-prestation-persistent-storage
-          persistentVolumeClaim:
-            claimName: postgres-prestation-pvc
-
 ---
-
-# postgres-prestation-service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-prestation-service
+  name: postgres-prestation
 spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
   selector:
     app: postgres-prestation
-  ports:
-    - protocol: TCP
-      port: 5432
-      targetPort: 5432
