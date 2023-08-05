@@ -38,7 +38,7 @@ spec:
             claimName: postgres-prestation-pv-claim
       containers:
         - image: postgres:latest
-          name: postgres-prestation
+          name: postgresp
           env:
             - name: POSTGRES_USER
               valueFrom:
@@ -54,7 +54,7 @@ spec:
               value: /var/lib/postgresql/data/pgdata
           ports:
             - containerPort: 5432
-              name: postgres-prestation
+              name: postgresp
           volumeMounts:
             - name: postgres-prestation-storage
               mountPath: /var/lib/postgresql/data
