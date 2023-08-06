@@ -16,23 +16,7 @@ spec:
     spec:
       containers:
         - name: adhesion-deployment
-          env:
-            - name: POSTGRES_USER
-              valueFrom:
-                configMapKeyRef:
-                  name: postgres-config
-                  key: postgres_user
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: postgres-config
-                  key: postgres_password
-            - name: POSTGRES_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: hostname-config
-                  key: postgres_host
-          image: blackrock30/adhesion-service:1.0.3
+          image: blackrock30/adhesion-service:1.1.0
 
 ---
 
