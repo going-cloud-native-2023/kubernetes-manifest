@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: cloud-gateway-app
-          image: blackrock30/cloud-gateway:1.0.1
+          image: blackrock30/cloud-gateway:1.1.0
           imagePullPolicy: Always
           ports:
             - containerPort: 8060
@@ -29,7 +29,7 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - port: 80
+    - port: 8060
       targetPort: 8060
       protocol: TCP
   selector:
