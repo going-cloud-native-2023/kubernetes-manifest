@@ -8,6 +8,14 @@ data:
   postgres_password: prestation-password
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hostname-pres-config
+data:
+  postgres_host: $(kubectl get svc postgres -o jsonpath="{.spec.clusterIP}")
+
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pres-pv-claim
