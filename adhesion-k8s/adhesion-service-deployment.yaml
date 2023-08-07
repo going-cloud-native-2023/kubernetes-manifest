@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: adhesion-deployment
-          image: blackrock30/adhesion-service:1.2.0
+          image: blackrock30/adhesion-service:1.2.1
           imagePullPolicy: Always
 
 ---
