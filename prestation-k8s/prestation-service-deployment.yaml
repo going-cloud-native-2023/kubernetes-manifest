@@ -32,7 +32,8 @@ spec:
                 configMapKeyRef:
                   name: hostname-pres-config
                   key: postgres_host
-          image: blackrock30/prestation-service:1.1.1
+          image: blackrock30/prestation-service:1.1.2
+          imagePullPolicy: Always
 
 ---
 
