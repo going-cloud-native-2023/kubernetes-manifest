@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: adhesion-deployment
+  name: document-deployment
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: adhesion-deployment
+      app: document-deployment
   template:
     metadata:
-      name: adhesion-deployment
+      name: document-deployment
       labels:
-        app: adhesion-deployment
+        app: document-deployment
     spec:
       containers:
-        - name: adhesion-deployment
-          image: blackrock30/adhesion-service:1.2.2
+        - name: document-deployment
+          image: blackrock30/document-service:1.2.2
           imagePullPolicy: Always
 
 ---
@@ -24,12 +24,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: adhesion-service
+  name: document-service
 spec:
   selector:
-    app: adhesion-deployment
+    app: document-deployment
   ports:
     - protocol: TCP
-      port: 9001
-      targetPort: 9001
+      port: 9003
+      targetPort: 9003
   type: NodePort
