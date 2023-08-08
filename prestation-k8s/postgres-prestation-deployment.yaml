@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: postgres-pres-config
+  name: postgres-config
   namespace: default
 data:
   postgres_user: prestation
@@ -12,13 +12,13 @@ data:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pres-pv-claim
+  name: postgres-pv-claim
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Mi
+      storage: 200Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -35,31 +35,39 @@ spec:
         app: postgres
     spec:
       volumes:
-        - name: postgres-pres-storage
+        - name: postgres-storage
           persistentVolumeClaim:
-            claimName: postgres-pres-pv-claim
+            claimName: postgres-pv-claim
+        - name: init-scripts
+          configMap:
+            name: postgres-init-scripts
       containers:
         - image: postgres:latest
           name: postgres
+          imagePullPolicy: Always
           env:
             - name: POSTGRES_USER
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-pres-config
+                  name: postgres-config
                   key: postgres_user
             - name: POSTGRES_PASSWORD
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-pres-config
+                  name: postgres-config
                   key: postgres_password
+            - name: POSTGRES_DB
+              value: prestation_db
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           ports:
             - containerPort: 5432
               name: postgres
           volumeMounts:
-            - name: postgres-pres-storage
+            - name: postgres-storage
               mountPath: /var/lib/postgresql/data
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d
 ---
 apiVersion: v1
 kind: Service
