@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
         - name: eureka
-          image: blackrock30/service-registry:1.2.2
+          image: blackrock30/service-registry:1.2.3
           imagePullPolicy: Always
           ports:
             - containerPort: 8761
