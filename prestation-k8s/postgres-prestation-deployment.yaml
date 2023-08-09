@@ -34,6 +34,7 @@ spec:
       labels:
         app: postgres
     spec:
+      nodeName: gk3-yoda-autopilot-cluster-1-pool-1-7dfd6340-s4tn
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
@@ -46,8 +47,8 @@ spec:
           name: postgres
           resources:
             requests:
-              memory: "256Mi"     # Minimum amount of memory required by the pod
-              cpu: "100m"         # 100 milliCPU units (0.1 CPU core)
+              memory: "128Mi"     # Minimum amount of memory required by the pod
+              cpu: "50m"         # 100 milliCPU units (0.1 CPU core)
           imagePullPolicy: Always
           env:
             - name: POSTGRES_USER

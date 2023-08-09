@@ -14,6 +14,7 @@ spec:
       labels:
         app: prestation-deployment
     spec:
+      nodeName: gk3-yoda-autopilot-cluster-1-pool-1-b36d88f4-tltf
       containers:
         - name: prestation-deployment
           env:
