@@ -34,7 +34,6 @@ spec:
       labels:
         app: postgres
     spec:
-      nodeName: gk3-yoda-autopilot-cluster-1-pool-1-7dfd6340-s4tn
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
