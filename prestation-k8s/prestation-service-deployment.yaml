@@ -32,7 +32,7 @@ spec:
                 configMapKeyRef:
                   name: hostname-config
                   key: postgres_host
-          image: blackrock30/prestation-service:1.2.3
+          image: blackrock30/prestation-service:2.0
           ports:
             - containerPort: 9002
           resources:
