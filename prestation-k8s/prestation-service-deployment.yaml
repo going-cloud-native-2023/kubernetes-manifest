@@ -14,7 +14,6 @@ spec:
       labels:
         app: prestation-deployment
     spec:
-      nodeName: gk3-yoda-autopilot-cluster-1-pool-1-7dfd6340-s4tn
       containers:
         - name: prestation-deployment
           env:
@@ -34,6 +33,15 @@ spec:
                   name: hostname-config
                   key: postgres_host
           image: blackrock30/prestation-service:1.2.3
+          ports:
+            - containerPort: 9002
+          resources:
+            requests:
+              memory: "256Mi"     # Minimum amount of memory required by the pod
+              cpu: "100m"         # 100 milliCPU units (0.1 CPU core)
+            limits:
+              memory: "512Mi"     # Maximum amount of memory allowed by the pod
+              cpu: "500m"
           imagePullPolicy: Always
 
 ---

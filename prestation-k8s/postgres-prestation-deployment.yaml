@@ -18,7 +18,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 200Mi
+      storage: 100Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -34,7 +34,6 @@ spec:
       labels:
         app: postgres
     spec:
-      nodeName: gk3-yoda-autopilot-cluster-1-pool-1-88ee9ab5-j8l8
       volumes:
         - name: postgres-storage
           persistentVolumeClaim:
@@ -45,6 +44,10 @@ spec:
       containers:
         - image: postgres:latest
           name: postgres
+          resources:
+            requests:
+              memory: "256Mi"     # Minimum amount of memory required by the pod
+              cpu: "100m"         # 100 milliCPU units (0.1 CPU core)
           imagePullPolicy: Always
           env:
             - name: POSTGRES_USER
