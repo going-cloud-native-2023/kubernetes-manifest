@@ -14,7 +14,6 @@ spec:
       labels:
         app: adhesion-deployment
     spec:
-      nodeName: gk3-yoda-autopilot-cluster-1-pool-1-b36d88f4-tltf
       containers:
         - name: adhesion-deployment
           image: blackrock30/adhesion-service:1.2.3
