@@ -48,7 +48,7 @@ spec:
           resources:
             requests:
               memory: "128Mi"     # Minimum amount of memory required by the pod
-              cpu: "50m"         # 100 milliCPU units (0.1 CPU core)
+              cpu: "3m"         # 100 milliCPU units (0.1 CPU core)
           imagePullPolicy: Always
           env:
             - name: POSTGRES_USER
